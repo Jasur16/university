@@ -5,6 +5,7 @@ import com.test.my_project.entity.University;
 import com.test.my_project.repository.RegionRepository;
 import com.test.my_project.repository.UniversityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,5 +37,24 @@ public class UniversityService {
     public List<University> getAllUniversities() {
         return universityRepository.findAll();
     }
+
+    public University updateUniversity(Long id, University updatedUniversity) throws ChangeSetPersister.NotFoundException {
+        Optional<University> existingUniversityOptional = universityRepository.findById(id);
+
+        if (existingUniversityOptional.isPresent()) {
+            University existingUniversity = existingUniversityOptional.get();
+            existingUniversity.setName(updatedUniversity.getName());
+
+            return universityRepository.save(existingUniversity);
+        } else {
+            throw new ChangeSetPersister.NotFoundException();
+        }
+    }
+
+    public void deleteUniversityById(Long id) {
+        universityRepository.deleteById(id);
+    }
+
+
 
 }

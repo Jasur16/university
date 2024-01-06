@@ -3,6 +3,7 @@ package com.test.my_project.service;
 import com.test.my_project.entity.Region;
 import com.test.my_project.repository.RegionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,7 +30,20 @@ public class RegionService {
         return regionRepository.save(region);
     }
 
-    public void deleteRegion(Long regionId) {
-        regionRepository.deleteById(regionId);
+    public Region updateRegion(Long id, Region updatedRegion) throws ChangeSetPersister.NotFoundException {
+        Optional<Region> existingRegionOptional = regionRepository.findById(id);
+
+        if (existingRegionOptional.isPresent()) {
+            Region existingRegion = existingRegionOptional.get();
+            existingRegion.setName(updatedRegion.getName());
+
+            return regionRepository.save(existingRegion);
+        } else {
+            throw new ChangeSetPersister.NotFoundException();
+        }
+    }
+
+    public void deleteRegionById(Long id) {
+        regionRepository.deleteById(id);
     }
 }

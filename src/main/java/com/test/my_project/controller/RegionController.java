@@ -3,6 +3,7 @@ package com.test.my_project.controller;
 import com.test.my_project.entity.Region;
 import com.test.my_project.service.RegionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,10 @@ public class RegionController {
     }
 
 
-    @GetMapping("/{regionId}")
-    public ResponseEntity<Region> getRegionById(@PathVariable Long regionId) {
-        Optional<Region> region = regionService.getRegionById(regionId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Region> getRegionById(@PathVariable Long id) {
+        Optional<Region> region = regionService.getRegionById(id);
+
         return region.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -38,6 +40,18 @@ public class RegionController {
     public ResponseEntity<Region> createRegion(@RequestBody Region region) {
         Region createdRegion = regionService.createRegion(region);
         return new ResponseEntity<>(createdRegion, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Region> updateRegion(@PathVariable Long id, @RequestBody Region updatedRegion) throws ChangeSetPersister.NotFoundException {
+        Region region = regionService.updateRegion(id, updatedRegion);
+        return new ResponseEntity<>(region, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRegionById(@PathVariable Long id) {
+        regionService.deleteRegionById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
