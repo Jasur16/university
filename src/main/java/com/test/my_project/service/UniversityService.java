@@ -38,12 +38,12 @@ public class UniversityService {
         return universityRepository.findAll();
     }
 
-    public University updateUniversity(Long id, University updatedUniversity) throws ChangeSetPersister.NotFoundException {
+    public University updateUniversity(Long id, University newName) throws ChangeSetPersister.NotFoundException {
         Optional<University> existingUniversityOptional = universityRepository.findById(id);
 
         if (existingUniversityOptional.isPresent()) {
             University existingUniversity = existingUniversityOptional.get();
-            existingUniversity.setName(updatedUniversity.getName());
+            existingUniversity.setName(newName.getName());
 
             return universityRepository.save(existingUniversity);
         } else {
@@ -54,7 +54,4 @@ public class UniversityService {
     public void deleteUniversityById(Long id) {
         universityRepository.deleteById(id);
     }
-
-
-
 }
